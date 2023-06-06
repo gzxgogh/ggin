@@ -1,4 +1,4 @@
-module ggin
+module github.com/gzxgogh/ggin
 
 go 1.19
 

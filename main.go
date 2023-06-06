@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"ggin/config"
-	"ggin/logs"
+	"github.com/gzxgogh/ggin/config"
+	"github.com/gzxgogh/ggin/logs"
 	"log"
 	"net/http"
 	"os"

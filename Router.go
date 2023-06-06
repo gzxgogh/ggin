@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ggin/middleware"
-	"ggin/model"
 	nice "github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-gonic/gin"
+	"github.com/gzxgogh/ggin/middleware"
+	"github.com/gzxgogh/ggin/model"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"

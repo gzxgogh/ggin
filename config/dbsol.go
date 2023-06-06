@@ -1,7 +1,7 @@
 package config
 
 import (
-	"ggin/logs"
+	"github.com/gzxgogh/ggin/logs"
 	"gopkg.in/mgo.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

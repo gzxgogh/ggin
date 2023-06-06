@@ -3,10 +3,10 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"ggin/config"
-	"ggin/logs"
-	"ggin/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/gzxgogh/ggin/config"
+	"github.com/gzxgogh/ggin/logs"
+	"github.com/gzxgogh/ggin/utils"
 	"io/ioutil"
 	"strings"
 	"time"

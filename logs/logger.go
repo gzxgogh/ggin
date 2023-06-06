@@ -2,8 +2,8 @@ package logs
 
 import (
 	"fmt"
-	"ggin/config"
 	nested "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/gzxgogh/ggin/config"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
