@@ -1,5 +1,8 @@
 package config
 
+// Cfg 全局的Config配置，解析dns.yaml的结果
+var Cfg *Configs
+
 type App struct {
 	Name   string `json:"name" yaml:"name"`
 	Listen string `json:"listen" yaml:"listen"`
@@ -39,8 +42,3 @@ type Configs struct {
 	Spec         string       `json:"spec" yaml:"spec"`
 	RuntimeParam runtimeParam `json:"-" yaml:"-"`
 }
-
-// Cfg 全局的Config配置，解析dns.yaml的结果
-var Cfg *Configs
-
-var configFileName = "example.yml"
