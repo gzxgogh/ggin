@@ -15,11 +15,13 @@ type Logger struct {
 
 type Mysql struct {
 	Conn string `json:"conn" yaml:"conn"`
+	Used bool   `json:"used" yaml:"used"`
 }
 
 type Mongo struct {
 	Conn string `json:"conn" yaml:"conn"`
 	Db   string `json:"db" yaml:"db"`
+	Used bool   `json:"used" yaml:"used"`
 }
 
 type Redis struct {
@@ -27,6 +29,7 @@ type Redis struct {
 	Port     int    `json:"port" yaml:"port"`
 	Password string `json:"password" yaml:"password"`
 	Db       int    `json:"db" yaml:"db"`
+	Used     bool   `json:"used" yaml:"used"`
 }
 
 type runtimeParam struct {

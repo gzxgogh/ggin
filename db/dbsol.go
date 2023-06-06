@@ -33,6 +33,7 @@ type InitDB struct {
 func (i *InitDB) Init() {
 	i.initMysql()
 	i.initMongo()
+	i.initRedis()
 }
 
 func (i *InitDB) initMysql() (done bool) {
@@ -41,7 +42,9 @@ func (i *InitDB) initMysql() (done bool) {
 			return
 		}
 	}()
-
+	if config.Cfg.Mysql.Used == false {
+		return false
+	}
 	mysqlConn := mysql.Open(config.Cfg.Mysql.Conn)
 	db, err := gorm.Open(mysqlConn, &gorm.Config{
 		Logger: logs.LogForDB(),
@@ -55,6 +58,9 @@ func (i *InitDB) initMysql() (done bool) {
 }
 
 func (i *InitDB) initMongo() (done bool) {
+	if config.Cfg.Mongo.Used == false {
+		return false
+	}
 	conn, err := mgo.Dial(config.Cfg.Mongo.Conn)
 	if err != nil {
 		return
@@ -64,6 +70,9 @@ func (i *InitDB) initMongo() (done bool) {
 }
 
 func (i *InitDB) initRedis() (done bool) {
+	if config.Cfg.Redis.Used == false {
+		return false
+	}
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf(`%s:%d`, config.Cfg.Redis.Host, config.Cfg.Redis.Port),
 		Password: config.Cfg.Redis.Password,
