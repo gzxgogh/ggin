@@ -20,7 +20,10 @@ type Mongo struct {
 }
 
 type Redis struct {
-	Conn string `json:"conn" yaml:"conn"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	Password string `json:"password" yaml:"password"`
+	Db       int    `json:"db" yaml:"db"`
 }
 
 type runtimeParam struct {

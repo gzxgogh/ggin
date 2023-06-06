@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+	"github.com/go-redis/redis"
 	"github.com/gzxgogh/ggin/logs"
 	"gopkg.in/mgo.v2"
 	"gorm.io/driver/mysql"
@@ -22,6 +24,7 @@ type InitDB struct {
 	// DBConn 连接实例
 	mysqlConn *gorm.DB
 	mongoConn *mgo.Database
+	redisConn *redis.Client
 	lock      sync.Mutex
 }
 
@@ -59,6 +62,16 @@ func (i *InitDB) initMongo() (done bool) {
 	return true
 }
 
+func (i *InitDB) initRedis() (done bool) {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf(`%s:%d`, Cfg.Redis.Host, Cfg.Redis.Port),
+		Password: Cfg.Redis.Password,
+		DB:       Cfg.Redis.Db,
+	})
+	i.redisConn = rdb
+	return true
+}
+
 // GetMysqlConn 得到数据库连接实例
 func (i *InitDB) GetMysqlConn() *gorm.DB {
 	if i.mysqlConn == nil {
@@ -77,4 +90,14 @@ func (i *InitDB) GetMongoConn() *mgo.Database {
 		}
 	}
 	return i.mongoConn
+}
+
+// GetRedisConn 得到数据库连接实例
+func (i *InitDB) GetRedisConn() *redis.Client {
+	if i.redisConn == nil {
+		if !i.initRedis() {
+			return nil
+		}
+	}
+	return i.redisConn
 }

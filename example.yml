@@ -12,4 +12,7 @@ mongo:
   conn: mongodb://user:password@127.0.0.1:2717
   db: dbName
 redis:
-  conn
+  host: 127.0.0.1
+  port: 6379
+  password:
+  db: 0
