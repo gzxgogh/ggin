@@ -1,4 +1,4 @@
-package main
+package ggin
 
 import (
 	nice "github.com/ekyoung/gin-nice-recovery"

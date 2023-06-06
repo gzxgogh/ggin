@@ -19,6 +19,10 @@ type Mongo struct {
 	Db   string `json:"db" yaml:"db"`
 }
 
+type Redis struct {
+	Conn string `json:"conn" yaml:"conn"`
+}
+
 type runtimeParam struct {
 	RootDir string `json:"-" yaml:"-"` // 此软件运行后的工作目录
 }
@@ -28,6 +32,7 @@ type Configs struct {
 	Logger       Logger       `json:"logger" yaml:"logger"`
 	Mysql        Mysql        `json:"mysql" yaml:"mysql"`
 	Mongo        Mongo        `json:"mongo" yaml:"mongo"`
+	Redis        Redis        `json:"redis" yaml:"redis"`
 	Spec         string       `json:"spec" yaml:"spec"`
 	RuntimeParam runtimeParam `json:"-" yaml:"-"`
 }

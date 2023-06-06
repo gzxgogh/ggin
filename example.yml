@@ -11,3 +11,5 @@ mysql:
 mongo:
   conn: mongodb://user:password@127.0.0.1:2717
   db: dbName
+redis:
+  conn
