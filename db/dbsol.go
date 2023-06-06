@@ -1,8 +1,9 @@
-package config
+package db
 
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/gzxgogh/ggin/config"
 	"github.com/gzxgogh/ggin/logs"
 	"gopkg.in/mgo.v2"
 	"gorm.io/driver/mysql"
@@ -41,7 +42,7 @@ func (i *InitDB) initMysql() (done bool) {
 		}
 	}()
 
-	mysqlConn := mysql.Open(Cfg.Mysql.Conn)
+	mysqlConn := mysql.Open(config.Cfg.Mysql.Conn)
 	db, err := gorm.Open(mysqlConn, &gorm.Config{
 		Logger: logs.LogForDB(),
 	})
@@ -54,19 +55,19 @@ func (i *InitDB) initMysql() (done bool) {
 }
 
 func (i *InitDB) initMongo() (done bool) {
-	conn, err := mgo.Dial(Cfg.Mongo.Conn)
+	conn, err := mgo.Dial(config.Cfg.Mongo.Conn)
 	if err != nil {
 		return
 	}
-	i.mongoConn = conn.Copy().DB(Cfg.Mongo.Db)
+	i.mongoConn = conn.Copy().DB(config.Cfg.Mongo.Db)
 	return true
 }
 
 func (i *InitDB) initRedis() (done bool) {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf(`%s:%d`, Cfg.Redis.Host, Cfg.Redis.Port),
-		Password: Cfg.Redis.Password,
-		DB:       Cfg.Redis.Db,
+		Addr:     fmt.Sprintf(`%s:%d`, config.Cfg.Redis.Host, config.Cfg.Redis.Port),
+		Password: config.Cfg.Redis.Password,
+		DB:       config.Cfg.Redis.Db,
 	})
 	i.redisConn = rdb
 	return true

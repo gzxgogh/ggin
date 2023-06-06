@@ -2,7 +2,7 @@ package ggin
 
 import (
 	"context"
-	"github.com/gzxgogh/ggin/config"
+	"github.com/gzxgogh/ggin/db"
 	"github.com/gzxgogh/ggin/logs"
 	"log"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 
 func main() {
 	logs.InitLogger()
-	config.DBObj.Init()
+	db.DBObj.Init()
 
 	engine := setupRouter()
 

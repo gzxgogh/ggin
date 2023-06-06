@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/gzxgogh/ggin/config"
+	"github.com/gzxgogh/ggin/db"
 	"github.com/gzxgogh/ggin/logs"
 	"github.com/gzxgogh/ggin/utils"
 	"io/ioutil"
@@ -121,7 +122,7 @@ func handleAccessChannel() {
 			logs.Error("未配置请求日志的MongoDB数据库表")
 			continue
 		}
-		conn := config.DBObj.GetMongoConn()
+		conn := db.DBObj.GetMongoConn()
 		if conn == nil {
 			logs.Error("获取MongoDB连接错误")
 		}
