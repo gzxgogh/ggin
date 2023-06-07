@@ -14,14 +14,21 @@ type Logger struct {
 }
 
 type Mysql struct {
-	Conn string `json:"conn" yaml:"conn"`
-	Used bool   `json:"used" yaml:"used"`
+	User     string `json:"user" yaml:"user"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	Password string `json:"password" yaml:"password"`
+	Db       string `json:"db" yaml:"db"`
+	Used     bool   `json:"used" yaml:"used"`
 }
 
 type Mongo struct {
-	Conn string `json:"conn" yaml:"conn"`
-	Db   string `json:"db" yaml:"db"`
-	Used bool   `json:"used" yaml:"used"`
+	User     string `json:"user" yaml:"user"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	Password string `json:"password" yaml:"password"`
+	Db       string `json:"db" yaml:"db"`
+	Used     bool   `json:"used" yaml:"used"`
 }
 
 type Redis struct {

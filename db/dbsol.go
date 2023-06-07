@@ -45,7 +45,9 @@ func (i *InitDB) initMysql() (done bool) {
 	if config.Cfg.Mysql.Used == false {
 		return false
 	}
-	mysqlConn := mysql.Open(config.Cfg.Mysql.Conn)
+	conn := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`,
+		config.Cfg.Mysql.User, config.Cfg.Mysql.Password, config.Cfg.Mysql.Host, config.Cfg.Mysql.Port, config.Cfg.Mysql.Db)
+	mysqlConn := mysql.Open(conn)
 	db, err := gorm.Open(mysqlConn, &gorm.Config{
 		Logger: logs.LogForDB(),
 	})
@@ -61,11 +63,13 @@ func (i *InitDB) initMongo() (done bool) {
 	if config.Cfg.Mongo.Used == false {
 		return false
 	}
-	conn, err := mgo.Dial(config.Cfg.Mongo.Conn)
+	conn := fmt.Sprintf(`mongodb://%s:%s@%s:%d`, config.Cfg.Mongo.User, config.Cfg.Mongo.Password, config.Cfg.Mongo.Host, config.Cfg.Mongo.Port)
+	db, err := mgo.Dial(conn)
 	if err != nil {
+		logs.Log.Error(err)
 		return
 	}
-	i.mongoConn = conn.Copy().DB(config.Cfg.Mongo.Db)
+	i.mongoConn = db.Copy().DB(config.Cfg.Mongo.Db)
 	return true
 }
 
