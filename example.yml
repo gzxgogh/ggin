@@ -12,7 +12,7 @@ mysql:
   used: true
 mongo:
   used: true
-  conn: mongodb://user:pwd@localhost:post
+  conn: mongodb://user:pwd@localhost:port
   db: test
 redis:
   used: false
