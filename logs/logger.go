@@ -10,10 +10,17 @@ import (
 	"log"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 var (
 	Log *logrus.Logger
+)
+
+const (
+	LogTypeInfo  = "info"
+	LogTypeErr   = "err"
+	LogTypePanic = "panic"
 )
 
 // InitLogger InitLogger
@@ -49,34 +56,45 @@ func formatter(isConsole bool) *nested.Formatter {
 
 // NewLfsHook NewLfsHook
 func NewLfsHook(logName string, leastDay uint) logrus.Hook {
-	infoLogs, err := rotatelogs.New(
-		logName+"-info.%Y%m%d",                 // 日志文件
-		rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
-	)
-	if err != nil {
-		log.Fatal(err)
+	logArr := strings.Split(config.Cfg.Logger.Type, ",")
+	var obj = lfshook.WriterMap{}
+	if len(logArr) == 0 {
+		infoLogs, err := rotatelogs.New(
+			logName+"-%Y%m%d",                      // 日志文件
+			rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+		obj = lfshook.WriterMap{
+			logrus.InfoLevel: infoLogs,
+		}
+	} else {
+		for _, typ := range logArr {
+			p := logName + "-" + typ + ".%Y%m%d"
+			if typ == LogTypeInfo {
+				infoLogs, _ := rotatelogs.New(
+					p,                                      // 日志文件
+					rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
+				)
+				obj[logrus.InfoLevel] = infoLogs
+			} else if typ != LogTypeErr {
+				errLogs, _ := rotatelogs.New(
+					p,                                      // 日志文件
+					rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
+				)
+				obj[logrus.ErrorLevel] = errLogs
+			} else if typ != LogTypePanic {
+				panicLogs, _ := rotatelogs.New(
+					p,                                      // 日志文件
+					rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
+				)
+				obj[logrus.PanicLevel] = panicLogs
+			}
+		}
 	}
-	errLogs, err := rotatelogs.New(
-		logName+"-err.%Y%m%d",                  // 日志文件
-		rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	panicLogs, err := rotatelogs.New(
-		logName+"-panic.%Y%m%d",                // 日志文件
-		rotatelogs.WithRotationCount(leastDay), //只保留最近的N个日志文件
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// 可设置按不同level创建不同的文件名
-	lfsHook := lfshook.NewHook(lfshook.WriterMap{
-		logrus.InfoLevel:  infoLogs,
-		logrus.ErrorLevel: errLogs,
-		logrus.PanicLevel: panicLogs,
-	}, formatter(false))
+	lfsHook := lfshook.NewHook(obj, formatter(false))
 	return lfsHook
 }
 

@@ -3,19 +3,23 @@ app:
   listen: "0.0.0.0:8310"
 
 logger:
+  type: info,err,panic
   path: logs
   requestTableName:
 
 mysql:
-  conn: user:password@tcp(127.0.0.1:3306)/dbName?charset=utf8&parseTime=True&loc=Local
-  used: false
+  conn: user:pwd@tcp(localhost:port)/dbname?charset=utf8&parseTime=True&loc=Local
+  used: true
 mongo:
-  conn: mongodb://user:password@127.0.0.1:2717
-  db: dbName
-  used: false
+  used: true
+  conn: mongodb://user:pwd@localhost:post
+  db: test
 redis:
   used: false
-  host: 127.0.0.1
-  port: 6379
+  addr: local:port
   password:
   db: 0
+rabbitMq:
+  conn: amqp://user:pwd@localhost:port/
+  used: true
+

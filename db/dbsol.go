@@ -1,10 +1,10 @@
 package db
 
 import (
-	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/gzxgogh/ggin/config"
 	"github.com/gzxgogh/ggin/logs"
+	"github.com/streadway/amqp"
 	"gopkg.in/mgo.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -23,10 +23,11 @@ func NewInitDB() *InitDB {
 // InitDB 初始化数据库的连接
 type InitDB struct {
 	// DBConn 连接实例
-	mysqlConn *gorm.DB
-	mongoConn *mgo.Database
-	redisConn *redis.Client
-	lock      sync.Mutex
+	mysqlConn  *gorm.DB
+	mongoConn  *mgo.Database
+	redisConn  *redis.Client
+	rabbitConn *amqp.Channel
+	lock       sync.Mutex
 }
 
 // Init Init
@@ -34,6 +35,7 @@ func (i *InitDB) Init() {
 	i.initMysql()
 	i.initMongo()
 	i.initRedis()
+	i.initRabbit()
 }
 
 func (i *InitDB) initMysql() (done bool) {
@@ -45,9 +47,7 @@ func (i *InitDB) initMysql() (done bool) {
 	if config.Cfg.Mysql.Used == false {
 		return false
 	}
-	conn := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`,
-		config.Cfg.Mysql.User, config.Cfg.Mysql.Password, config.Cfg.Mysql.Host, config.Cfg.Mysql.Port, config.Cfg.Mysql.Db)
-	mysqlConn := mysql.Open(conn)
+	mysqlConn := mysql.Open(config.Cfg.Mysql.Conn)
 	db, err := gorm.Open(mysqlConn, &gorm.Config{
 		Logger: logs.LogForDB(),
 	})
@@ -63,8 +63,7 @@ func (i *InitDB) initMongo() (done bool) {
 	if config.Cfg.Mongo.Used == false {
 		return false
 	}
-	conn := fmt.Sprintf(`mongodb://%s:%s@%s:%d`, config.Cfg.Mongo.User, config.Cfg.Mongo.Password, config.Cfg.Mongo.Host, config.Cfg.Mongo.Port)
-	db, err := mgo.Dial(conn)
+	db, err := mgo.Dial(config.Cfg.Mongo.Conn)
 	if err != nil {
 		logs.Log.Error(err)
 		return
@@ -78,7 +77,7 @@ func (i *InitDB) initRedis() (done bool) {
 		return false
 	}
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf(`%s:%d`, config.Cfg.Redis.Host, config.Cfg.Redis.Port),
+		Addr:     config.Cfg.Redis.Addr,
 		Password: config.Cfg.Redis.Password,
 		DB:       config.Cfg.Redis.Db,
 	})
@@ -86,7 +85,23 @@ func (i *InitDB) initRedis() (done bool) {
 	return true
 }
 
-// GetMysqlConn 得到数据库连接实例
+func (i *InitDB) initRabbit() (done bool) {
+	if config.Cfg.RabbitMq.Used == false {
+		return false
+	}
+	conn, err := amqp.Dial(config.Cfg.RabbitMq.Conn)
+	if err != nil {
+		return false
+	}
+	ch, err := conn.Channel()
+	if err != nil {
+		return false
+	}
+	i.rabbitConn = ch
+	return true
+}
+
+// GetMysqlConn 得到Mysql数据库连接实例
 func (i *InitDB) GetMysqlConn() *gorm.DB {
 	if i.mysqlConn == nil {
 		if !i.initMysql() {
@@ -96,7 +111,7 @@ func (i *InitDB) GetMysqlConn() *gorm.DB {
 	return i.mysqlConn
 }
 
-// GetMongoConn 得到数据库连接实例
+// GetMongoConn 得到Mongo数据库连接实例
 func (i *InitDB) GetMongoConn() *mgo.Database {
 	if i.mongoConn == nil {
 		if !i.initMongo() {
@@ -106,7 +121,7 @@ func (i *InitDB) GetMongoConn() *mgo.Database {
 	return i.mongoConn
 }
 
-// GetRedisConn 得到数据库连接实例
+// GetRedisConn 得到Redis数据库连接实例
 func (i *InitDB) GetRedisConn() *redis.Client {
 	if i.redisConn == nil {
 		if !i.initRedis() {
@@ -114,4 +129,14 @@ func (i *InitDB) GetRedisConn() *redis.Client {
 		}
 	}
 	return i.redisConn
+}
+
+// GetRabbitConn 得到Rabbit数据库连接实例
+func (i *InitDB) GetRabbitConn() *amqp.Channel {
+	if i.rabbitConn == nil {
+		if i.initRabbit() {
+			return nil
+		}
+	}
+	return i.rabbitConn
 }

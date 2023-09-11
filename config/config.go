@@ -10,33 +10,31 @@ type App struct {
 
 type Logger struct {
 	Path             string `json:"path" yaml:"path"`
+	Type             string `json:"type" yaml:"type"`
 	RequestTableName string `json:"requestTableName" yaml:"requestTableName"`
 }
 
 type Mysql struct {
-	User     string `json:"user" yaml:"user"`
-	Host     string `json:"host" yaml:"host"`
-	Port     int    `json:"port" yaml:"port"`
-	Password string `json:"password" yaml:"password"`
-	Db       string `json:"db" yaml:"db"`
-	Used     bool   `json:"used" yaml:"used"`
+	Conn string `json:"conn" yaml:"conn"`
+	Used bool   `json:"used" yaml:"used"`
 }
 
 type Mongo struct {
-	User     string `json:"user" yaml:"user"`
-	Host     string `json:"host" yaml:"host"`
-	Port     int    `json:"port" yaml:"port"`
-	Password string `json:"password" yaml:"password"`
-	Db       string `json:"db" yaml:"db"`
-	Used     bool   `json:"used" yaml:"used"`
+	Conn string `json:"conn" yaml:"conn"`
+	Db   string `json:"db" yaml:"db"`
+	Used bool   `json:"used" yaml:"used"`
 }
 
 type Redis struct {
-	Host     string `json:"host" yaml:"host"`
-	Port     int    `json:"port" yaml:"port"`
+	Addr     string `json:"addr" yaml:"addr"`
 	Password string `json:"password" yaml:"password"`
 	Db       int    `json:"db" yaml:"db"`
 	Used     bool   `json:"used" yaml:"used"`
+}
+
+type RabbitMq struct {
+	Conn string `json:"conn" yaml:"conn"`
+	Used bool   `json:"password" yaml:"password"`
 }
 
 type runtimeParam struct {
@@ -49,6 +47,7 @@ type Configs struct {
 	Mysql        Mysql        `json:"mysql" yaml:"mysql"`
 	Mongo        Mongo        `json:"mongo" yaml:"mongo"`
 	Redis        Redis        `json:"redis" yaml:"redis"`
+	RabbitMq     RabbitMq     `json:"rabbitMq" yaml:"rabbitMq"`
 	Spec         string       `json:"spec" yaml:"spec"`
 	RuntimeParam runtimeParam `json:"-" yaml:"-"`
 }
